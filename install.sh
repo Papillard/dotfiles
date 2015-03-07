@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 for name in *; do
   if [ ! -d "$name" ]; then
     target="$HOME/.$name"
@@ -36,9 +36,27 @@ if [ ! -d "$ZSH_PLUGINS_DIR/zsh-history-substring-search" ]; then
 fi
 cd "$CURRENT_DIR"
 
-# zshenv
-if [ ! -e "$HOME/.zshenv" ]; then
-  touch "$HOME/.zshenv"
+
+echo "Type in your first and last name (no accent or special characters - e.g. 'ç'): "
+read full_name
+echo "Type in your email address (the one used for your GitHub account): "
+read email
+git config --global user.email $email
+git config --global user.name $full_name
+
+setopt nocasematch
+if [[ ! `uname` =~ "darwin" ]]; then
+  git config --global core.editor "subl -n -w"
 fi
 
-echo "You should quit and relaunch your terminal!"
+git add gitconfig
+git commit --message "My identity for @lewagon in the gitconfig"
+git push origin master
+
+zsh ~/.zshrc
+
+if [[ `uname` =~ "darwin" ]]; then
+  echo "Quit your terminal (⌘ + Q) and restart it."
+else
+  echo "Quit your terminal (Alt + F4) and restart it."
+fi
